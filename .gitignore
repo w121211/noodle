@@ -1,0 +1,9 @@
+*.class
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+*.pyc
+*.db
+.idea/*
