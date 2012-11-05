@@ -6,8 +6,8 @@ from django.template.loader import render_to_string
 from django.template import RequestContext
 from django.utils import simplejson
 from django.http import HttpResponse
-
-from account.decorators import login_required
+from django.http import HttpResponseForbidden
+from django.utils.safestring import mark_safe
 
 from tagcanal.models import *
 from tagcanal.utils import *
@@ -21,42 +21,51 @@ POSTS_PER_PAGE = 5
 _tagger = GeneralTagger()
 _miner = TextMiner(NounTag.objects.all())
 
-def _response(resp_data):
-    resp = simplejson.dumps(resp_data, separators=(',', ':'))
-    return HttpResponse(resp, mimetype='application/json')
 
 def _paginate(queryset, item_num, time=None):
     """
     Return qs which <= time, with number of items specified
     """
-    if len(time) == 0:
+    if not time:
         return queryset.filter()[:item_num]
     else:
-        return queryset.filter(created_time__lt=time)[:item_num]
+        return queryset.filter(time__lt=time)[:item_num]
+
+
+def response_errors(error_str):
+    return HttpResponseForbidden(mark_safe(error_str))
+
+
+def response(resp_data):
+    resp = simplejson.dumps(resp_data, separators=(',', ':'))
+    return HttpResponse(resp, mimetype='application/json')
+
 
 @ajax_view
 def get_posts(request):
-    resp = {
-        'alert': None,
-        'posts': [],
-        }
-    tags = request.GET.get('t', None)
-    time = request.GET.get('d', None)
+    try:
+        resp = {
+            'alert': None,
+            'posts': [],
+            }
+        tags = request.GET.get('t', None)
+        time = request.GET.get('d', None)
 
-    qs = Post.objects.all()
-    if tags:
-        # return posts by given tags
-        tags = tags.split('+')
-        qs = _tagger.search(qs, tags, request.user)
-    else:
-        # return my_stream posts
-        qs = _paginate(qs, POSTS_PER_PAGE, time)
+        qs = Post.objects.all()
+        if tags: # return posts by given tags
+            tags = tags.split('+')
+            qs = _tagger.search(qs, tags, request.user)
+        else: # return all posts
+            qs = _paginate(qs, POSTS_PER_PAGE, time)
 
-    for post in qs:
-        resp['posts'].append(post.to_json(request.user))
-    if len(resp['posts']) == 0:
-        resp['alert'] = 'no matching posts'
-    return _response(resp)
+        for post in qs:
+            resp['posts'].append(post.to_json(request.user))
+        if len(resp['posts']) == 0:
+            return response_errors('no matching posts or no more posts')
+        return response(resp)
+    except Exception as e:
+        return response_errors(str(e))
+
 
 @ajax_view(method='POST')
 def autotag_post(request):
@@ -72,8 +81,7 @@ def autotag_post(request):
     # Validate post content
     f = PostForm(request.POST)
     if not f.is_valid():
-        resp['alert'] = "post title or body is not valid"
-        return _response(resp)
+        return response_errors(f.errors.as_text())
     post = f.save(commit=False)
 
     # get matching tags
@@ -83,14 +91,14 @@ def autotag_post(request):
     #    resp['tags'] = list(g.direct_tags)
     resp['tags'] = g.get_recommend_tags()
 
-    return _response(resp)
+    return response(resp)
 
 # TODO fix ajax redirect (302) error. (1) add ajaxRedirectResponse (2) using view div to display html
 @ajax_view(method='POST')
-def new_post(request):
+def create_post(request):
     """
     Create a new post.
-    {domain}/api/post/new/
+    {domain}/api/post/create/
     """
     resp = {
         'alert': None,
@@ -100,7 +108,7 @@ def new_post(request):
     f = PostForm(request.POST)
     if not f.is_valid():
         resp['alert'] = "post title or body is not valid"
-        return _response(resp)
+        return response(resp)
     post = f.save(commit=False)
     post.user = request.user
     post.save()
@@ -110,11 +118,13 @@ def new_post(request):
     _tagger.like.tag(post)
     _tagger.noun.bulk_tag(post, tags, request.user)
 
-    return _response(resp)
+    return response(resp)
 
 @ajax_view(method='POST')
 def reply_post(request):
     """
+    Deprecated method.
+
     Reply a post.
     {domain}/api/post/reply/
     """
@@ -143,14 +153,14 @@ def push_post(request):
     f = PushForm(request.POST)
     if not f.is_valid():
         resp['alert'] = f.errors.as_text()
-        return _response(resp)
+        return response(resp)
     push = f.save(commit=False)
     push.user = request.user
     push.save()
 
     _tagger.like.tag(push)
     resp['pushes'] = push.post.get_pushes(request.user)
-    return _response(resp)
+    return response(resp)
 
 @ajax_view(method='POST')
 def tag_post(request):
@@ -166,7 +176,7 @@ def tag_post(request):
         f = LivetagForm(request.POST)
         if not f.is_valid():
             resp['alert'] = f.errors.as_text()
-            return _response(resp)
+            return response(resp)
 
         p = Post.objects.get(id=f.cleaned_data['item'])
         _tagger.noun.tag(p, f.cleaned_data['tag'], request.user)
@@ -175,7 +185,7 @@ def tag_post(request):
         resp['alert'] = "%s cannot be used as the tag" % e.tag
     except Exception as e:
         print e
-    return _response(resp)
+    return response(resp)
 
 @ajax_view
 def vote_livetag(request):
@@ -193,8 +203,11 @@ def vote_livetag(request):
         resp['tags'] = item.get_tags(request.user)
     except LiveTag.DoesNotExist:
         resp['alert'] = "cannot find the live tag"
-    return _response(resp)
+    except Exception as e:
+        print e
+    return response(resp)
 
+@ajax_view
 def unvote_livetag(request):
     """
     User can vote a live tag (a tag of an object) with a given live tag id.
@@ -210,7 +223,7 @@ def unvote_livetag(request):
         resp['tags'] = item.get_tags(request.user)
     except LiveTag.DoesNotExist:
         resp['alert'] = "cannot find the live tag"
-    return _response(resp)
+    return response(resp)
 
 def get_pushes(request):
     """

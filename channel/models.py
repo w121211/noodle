@@ -16,9 +16,12 @@ class Channel(models.Model):
         j = {
             'id': self.id,
             'name': self.name,
-            'tags': list(t.name for t in self.tags.all())
+            'tags': self.get_all_tags(),
         }
         return j
+
+    def get_all_tags(self):
+        return list(t.name for t in self.tags.all())
 
     def add_tag(self, tag_name):
         t = NounTag.objects.get(name=tag_name)

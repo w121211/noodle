@@ -1,0 +1,82 @@
+<div ng-controller="PostCtrl" ng-init="loadPosts()">
+
+
+    <div class="post-form">
+        title: <input type="text" ng-model="title">
+        body: <textarea ng-model="body"></textarea>
+        <button ng-click="autotag(this)">autotag</button>
+        <button ng-click="createPost(this)">post</button>
+
+        <div ng-controller="TagCtrl">
+            <p ng-repeat="(key, val) in tagSet">
+                {{ key }}
+                <i ng-click="removeTag(key)" class="icon-remove"></i>
+            </p>
+            <div class="tag_form">
+                add a tag: <input type="text" ng-model="tag" on-keyup="addTag()" keys="[27,13]">
+            </div>
+        </div>
+    </div>
+
+
+    <div ng-repeat="post in posts">
+
+        <h4 ng-show="post.reid">RE:</h4>
+        <h4 ng-show="!post.reid">NEW:</h4>
+        <p>{{ post.id }} | {{ post.title }} @ {{ post.user }}</p><p>{{ post.body }}</p>
+
+
+        <hr>
+        <div ng-controller="PostReplyCtrl" ng-init="title=post.title; repost=post.id" class="repost_form">
+            <p>{{ title }}</p>
+            body: <textarea ng-model="body"></textarea>
+            <button ng-click="autotag(this)">autotag</button>
+            <button ng-click="createPost(this)">post</button>
+            <div ng-controller="TagCtrl">
+                <p ng-repeat="(key, val) in tagSet">
+                    {{ key }}
+                    <i ng-click="removeTag(key)" class="icon-remove"></i>
+                </p>
+                <div class="tag_form">
+                    add a tag: <input type="text" ng-model="tag" on-keyup="addTag()" keys="[27,13]">
+                </div>
+            </div>
+        </div>
+
+
+        <hr>
+        <div ng-controller="LivetagCtrl" ng-init="livetags=post.tags">
+            <ul ng-repeat="livetag in livetags">
+                <a ng-click="unvote(livetag.id)" ng-show="livetag.myvote">{{ livetag.name }}</a>
+                <a ng-click="vote(livetag.id)" ng-hide="livetag.myvote">{{ livetag.name }}</a>
+                <i>x {{ livetag.votes }}</i>
+            </ul>
+            <div class="livetag_form">
+                livetag: <input type="text" ng-model="name" on-keyup="tag()" keys="[27,13]">
+            </div>
+        </div>
+
+
+        <div ng-controller="PushCtrl" ng-init="pushes=post.pushes">
+            <div ng-repeat="push in pushes">
+                # {{ push.body }}
+                <i ng-controller="LivetagCtrl" ng-init="livetags=push.tags">
+                    <i ng-repeat="livetag in livetags">
+                        <a ng-click="unvote(livetag.id)" ng-show="livetag.myvote">{{ livetag.name }}</a>
+                        <a ng-click="vote(livetag.id)" ng-hide="livetag.myvote">{{ livetag.name }}</a>
+                        x{{ livetag.votes }}
+                    </i>
+                </i>
+
+            </div>
+            <div class="push_form">
+                push: <input type="text" ng-model="body" on-keyup="push()" keys="[27,13]">
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h1><a ng-click="loadPosts()">dig deeper</a></h1>
+    </div>
+</div>
+

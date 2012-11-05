@@ -1,0 +1,612 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="./bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="file:///Users/chi/git/noodle/noodle/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="./example.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="./bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
+
+    <!-- Drag-and-drop -->
+    <script type="text/javascript">
+    $(function() {
+
+      $(".tags").draggable({
+        cursor:'move',
+        appendTo: 'body',
+        zIndex: 300,
+        helper:'clone'
+      });
+
+       $(".ctags").draggable({
+        cursor:'move',
+        appendTo: 'body',
+        helper:'clone',
+        revert:'true'
+      });
+
+
+      $(".channel").droppable( {
+        // over: function handleOverEvent( event, ui ) {
+        //   // &(this).next('.channelExtBox').collapse("toggle");
+        //   $('#channel5Extent').collapse("toggle")},
+        drop: function handleDropEvent( event, ui ) {
+
+                var draggedtag=ui.draggable.text();
+                var tagsinside=[];
+
+                $(this).next(".channelExtBox").children(".ctags").each(function(){
+                    tagsinside.push($(this).text());
+                    return  tagsinside});
+
+
+
+               if (0 > tagsinside.indexOf(draggedtag) ){
+
+          $(this).next(".channelExtBox").append('<a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>'+draggedtag+'</a>');
+
+        }
+
+
+  
+       }
+     });
+    //
+    $(".channelExtBox").droppable( {
+
+        drop: function handleDropEvent( event, ui ) {
+             var draggedtag=ui.draggable.text();
+              var tagsinside=[];
+
+              $(this).children(".ctags").each(function(){
+                    tagsinside.push($(this).text());
+                    return  tagsinside});
+
+             if (0 > tagsinside.indexOf(draggedtag) ){
+
+            $(this).append('<a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>'+draggedtag+'</a>');}
+          }
+
+
+              } );
+
+    });
+
+
+    </script>
+    <!-- Drag-and-drop end -->
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+    <div class="banner">
+        <font color="white"><h1>NoodlE!</h1></font>
+    </div>
+    <div class="hcontent">
+        <h4>Threading Random pieces from daily life. </h4>
+    </div>
+    <div class="userzone"></div>
+</div>
+
+<div class="span2 channelBox">
+    <!--Sidebar content-->
+    <script type="text/javascript">//channelremove-func
+           
+           $(".channelremove").live('click', function() {
+             $(this).parent().parent().remove();
+            $(this).parent().remove();
+           
+             });
+    </script>
+    <script type="text/javascript">//channel click to orange-func
+           $(".channel").live('click', function() {
+              $('.channelExtBox').collapse({toggle: false});
+
+             // $(".channel").css("background","")
+             // $(this).css("background","orange");
+              $('.channelExtBox').collapse("hide");
+              $('.channel').not(this).removeClass("nowchannel");
+              $(this).toggleClass("nowchannel");
+              $(".nowchannel").css("background","orange");
+           
+             });
+    </script>
+
+    <div>
+        <a class="btn btn-success channel" data-toggle="collapse" data-target="#channel1Extent">
+            <h4>channel1</h4>
+        </a>
+        <div class="collapse channelExtBox" id="channel1Extent">
+            <a class="btn btn-danger channelremove"><i class=" icon-trash icon-white"></i></a>
+            <a class="btn btn-primary ctagsEdit"><i class=" icon-pencil icon-white"></i></a>
+            <hr>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag1</a>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag2</a>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag3</a>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag4</a>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag5</a>
+        </div>
+    </div>
+
+    <div>
+        <a class="btn btn-success channel"data-toggle="collapse" data-target="#channel2Extent"><h4>channel2</h4></a>
+        <div class="collapse channelExtBox" id="channel2Extent">
+            <a class="btn btn-danger channelremove"><i class=" icon-trash icon-white"></i></a>
+            <a class="btn btn-primary ctagsEdit"><i class=" icon-pencil icon-white"></i></a>
+            <hr>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag1</a>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag2</a>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag3</a>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag4</a>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag5</a>
+        </div>
+    </div>
+    <div>
+        <a class="btn btn-success channel" data-toggle="collapse" data-target="#channel3Extent"><h4>channel3</h4></a>
+        <div class="collapse channelExtBox" id="channel3Extent">
+            <a class="btn btn-danger channelremove"><i class=" icon-trash icon-white"></i></a>
+            <a class="btn btn-primary ctagsEdit"><i class=" icon-pencil icon-white"></i></a>
+            <hr>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag1</a>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag2</a>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag3</a>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag4</a>
+            <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag5</a>
+        </div>
+    </div>
+    <div>
+      <a class="btn btn-success channel" data-toggle="collapse" data-target="#channel4Extent"><h4>channel4</h4></a>
+      <div class="collapse channelExtBox" id="channel4Extent">
+                <a class="btn btn-danger channelremove"><i class=" icon-trash icon-white"></i></a>
+                <a class="btn btn-primary ctagsEdit"><i class=" icon-pencil icon-white"></i></a>
+                <hr>
+                <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag1</a>
+                <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag2</a>
+                <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag3</a>
+                <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag4</a>
+                <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag5</a>
+          </div>
+        </div>
+        <div>
+      <a class="btn btn-success channel" data-toggle="collapse" data-target="#channel5Extent"><h4>channel5</h4></a>
+      <div class="collapse channelExtBox" id="channel5Extent">
+                <a class="btn btn-danger channelremove"><i class=" icon-trash icon-white"></i></a>
+                <a class="btn btn-primary ctagsEdit"><i class=" icon-pencil icon-white"></i></a>
+                <hr>
+                <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag1</a>
+                <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag2</a>
+                <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag3</a>
+                <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag4</a>
+                <a class="btn btn-inverse ctags"><i class="icon-remove icon-white tagremove"></i>Tag5</a>
+          </div>
+</div>
+      <a class="btn channel-btn-creat"><h4>CreatNew!</h4></a> 
+
+    </div>
+
+<div class="span8 stream"><!--Stream-->
+    <div class="alertPost"></div>
+    <div class="postBoard">
+        <div class="postBoardContent">
+            <textarea class="postBoardTitle" type="text" placeholder="Title here..."warp="soft"></textarea><br>
+            <textarea class="postBoardInput" type="text" placeholder="Here's my opions..." warp="soft"></textarea>
+            <button class="btn btn-danger PostItNow" data-toggle="collapse" data-target="#postboard-tagbox"><h1>TagYourPostNow!<br><i class="icon-arrow-down icon-white"></i></h1></button>
+        </div>
+        <div id="postboard-tagbox" class="collapse">
+            <div class="input-append postboard_tagbox-input-append">
+                <input class="span2 postboard_tagbox-input" placeholder="Add More Tag..." size="16" type="text" data-provide="typeahead" onkeydown="checkForm(event);">
+
+                <!-- Enter-inpuf-func -->
+                <script type="text/javascript">
+
+                    function checkForm(e) {
+                      if (e.keyCode == 13) {
+
+                      var input = $(".postboard_tagbox-input").val();
+
+
+                     //function newtag(){$(".postboard-tag").each(function(){
+
+                       //     if (!$this.is(':contains('+input+')'){return true;}
+
+                      if (input.length >8 || input=='' ){
+
+                        $("#postboard_tagbox-btn-addntag").popover('show');
+
+
+
+
+                      }
+                      else if ($(".postboard_tagbox-input").val()!='')
+                        {
+                           $("#postboard-tagbox").append(' <a class="btn btn-primary disabled postboard-tag"><i class="icon-remove icon-white tagremove"></i> '+input+'</a>');
+
+
+                        $(".postboard_tagbox-input").val('');
+                        $("#postboard_tagbox-btn-addntag").popover('hide');//Reset input
+
+                        }
+
+                       }
+                     }
+
+                      </script>
+                <!-- Enter-inpuf-func -->
+                <script> //typeahead-func
+                      $('.postboard_tagbox-input').typeahead({
+                      source:['科技','科學','生活','旅遊','美食']});
+                    </script>
+
+                <button class="btn tagbox-btn-addntag" id="postboard_tagbox-btn-addntag" type="button"><h5>+<h5></button>
+
+                <!-- add n tag -->
+                <script> // addNtag
+                   $("#postboard_tagbox-btn-addntag").popover({
+                          placement:"top",
+                          trigger:"manual",
+                          title:"Oops",
+                          content:"Tag不可空白且必須小於四個全型字（8個字母)"});
+
+                    $(".postboard_tagbox-input").click(function () {
+                      $("#postboard_tagbox-btn-addntag").popover('hide');
+                     });
+
+
+
+                   $("#postboard_tagbox-btn-addntag").click(function () {
+
+
+
+
+                      var input = $(".postboard_tagbox-input").val();
+
+
+                     //function newtag(){$(".postboard-tag").each(function(){
+
+                       //     if (!$this.is(':contains('+input+')'){return true;}
+
+                      if (input.length >8 || input=='' ){
+
+                        $("#postboard_tagbox-btn-addntag").popover('show');
+
+
+
+
+                      }
+                      else if ($(".postboard_tagbox-input").val()!='')
+                        {
+                           $("#postboard-tagbox").append(' <a class="btn btn-primary disabled postboard-tag"><i class="icon-remove icon-white tagremove"></i> '+input+'</a>');
+
+
+                        $(".postboard_tagbox-input").val(''); //Reset input
+
+                        }
+
+
+                      });
+                    </script>
+
+                <a class="btn btn-danger">SubmitPost</a>
+            </div>
+            <!--vtag-->
+            <div class="dropdown vtagbox">
+                <select class="btn btn-success vtag-select">
+                    <option>問掛</option>
+                </select>
+
+            </div>
+
+            <a class="btn btn-primary disabled postboard-tag"><i class="icon-remove icon-white tagremove"></i> Tag1</a>
+
+            <script type="text/javascript">//tagremove-func
+
+               $(".tagremove").live('click', function() {
+                $(this).parent().remove();
+                 });
+               </script>
+        </div>
+    </div><!--PostBoard close-->
+
+<div class="postBox">
+<hr>
+      <div class="post" id="postid">
+        <div class="row-fluid titleBox">
+           
+            <div class="span2 ifrePost">
+                <font color=white><p><h4>Re:</h4></p> </font>
+               </div>
+              <div class="span8 title">
+                   <p><h4>I am a title. </h4></p>
+               </div>
+            
+        </div>
+
+        <div class="row-fluid postContentBox">
+           
+            <div class="span2 postSide">
+              <img src="./photo.jpeg" class="img-rounded">
+              <h4>Shiki Kao</h4><hr>
+              <strong>Top5 Tags</strong>
+                <div class="tagbox">
+                <div class="tags">Tag1</div>
+                <div class="tags">Tag2</div>
+                <div class="tags">Tag3</div>
+                <div class="tags">Tag4</div>
+                <div class="tags">Tag5</div>
+              </div>
+               
+              
+            </div>
+                <div class="span10 postContent">
+                   <p>我決定，我看世界的角度。<br><br>
+ 
+                  隨心所欲地穿梭遊走，自由地捕捉角落風景，怡然自得的用自己的角度，建構自己的世界！<br>
+ 
+                  鮮明繽紛的色彩、漫畫感的黑框線條，JumpFromPaper呈現活潑可愛的卡通風格，創造出遊樂園的歡樂氛圍；設計師利用透視的斜角線條<br>來呈現立體深度，在 3D 空間裡偽裝 2D 樣貌，恣意玩弄視覺！也傳達了 JumpFromPaper<br> 要和大家一起跳出框框，變換觀察世界的角度，用澎湃的想像力撼動小宇宙！</p><!--Body content-->
+          
+               <div class="postproperties">                 
+                
+                 <div class="span2 prop"><a class="btn"><i class="icon-heart"></i></a><br>20</p></div>
+                  
+                  <div class="span2 prop alltags-btn-switch"><a class="btn" data-toggle="collapse" data-target="#postidalltags"><i class="icon-tags"></i></a><br>20</p></div>
+
+                  <div class="span2 prop"><a class="btn"><i class="icon-bookmark"></i></a><br>3</p></div>
+                  <div class="span2 prop"><a class="btn disabled"><i class="icon-comment"></i></a><br>20</p></div>
+                  <div class="span2 prop"><a class="btn" data-toggle="collapse" data-target="#post1-RepostBoard"><i class="icon-repeat"></i></a><br>1</p></div>
+                  <div class="span2 prop"><a class="btn"><i class="icon-share"></i></a><br>20</p></div>
+               </div>
+              </div>
+              
+          </div>
+
+        
+            <!--  all Tag Box-->
+          <div class="collapse alltags" id="postidalltags">
+       
+                <div class="tags">Tag1</div>
+                <div class="tags">Tag2</div>
+                <div class="tags">Tag3</div>
+                <div class="tags">Tag4</div>
+                <div class="tags">Tag5</div>
+         </div>
+        <!-- vote tag popover-func -->
+        <script type="text/javascript">
+        // $(".ctagsEdit").popover({
+        //               placement:"right",
+        //               trigger:"click",
+        //               title:"Note",
+        //               content:'Click to vote this tag'});
+        </script>
+        <!--  all Tag Box-->
+
+        <div class="collapse RepostBoard" id="post1-RepostBoard">
+           <div class="RepostBoardContent">
+               <textarea class="RepostBoardTitle" type="text" placeholder="Title here..."warp="soft"></textarea><br>
+               <textarea class="RepostBoardInput" type="text" placeholder="Here's my opions..." warp="soft"></textarea>
+               <button class="btn btn-warning RePostNow" data-toggle="collapse" data-target="#repostboard-tagbox"><h1>TagRePostNow!<br><i class="icon-arrow-down icon-white"></i></h1></button>
+           </div>
+
+           <div id="repostboard-tagbox" class="collapse">
+           <div class="input-append repostboard_tagbox-input-append">
+               
+                <input class="span2 repostboard_tagbox-input" placeholder="Add More Tag..." size="16" type="text" data-provide="typeahead" onkeydown="Repostcheck(event);">
+
+            <!-- Enter-inpuf-func -->
+                <script type="text/javascript">
+                    
+                function Repostcheck(e) {
+                  if (e.keyCode == 13) {
+       
+                  var input = $(".repostboard_tagbox-input").val();
+                
+
+                 //function newtag(){$(".postboard-tag").each(function(){
+                        
+                   //     if (!$this.is(':contains('+input+')'){return true;}
+
+                  if (input.length >8 || input=='' ){
+
+                    $("#repostboard_tagbox-btn-addntag").popover('show');
+
+                     
+
+
+                  }
+                  else if ($(".repostboard_tagbox-input").val()!='')
+                    {
+                       $("#repostboard-tagbox").append(' <a class="btn btn-primary disabled repostboard-tag"><i class="icon-remove icon-white tagremove"></i> '+input+'</a>');
+                    
+
+                    $(".repostboard_tagbox-input").val(''); 
+                    $("#repostboard_tagbox-btn-addntag").popover('hide');//Reset input
+
+                    }
+              
+                   }
+                 }
+
+                  </script>
+                <!-- Enter-inpuf-func -->
+
+                <script> //Typeahead-func
+
+                  $('.repostboard_tagbox-input').typeahead({
+                  source:['科技','科學','生活','旅遊','美食']});
+
+                </script>
+
+                <button class="btn tagbox-btn-addntag" id="repostboard_tagbox-btn-addntag" type="button"><h5>+<h5></button>
+
+                <script> // addNtag-func
+               $("#repostboard_tagbox-btn-addntag").popover({
+                      placement:"top",
+                      trigger:"manual",
+                      title:"Oops",
+                      content:'Tag不可空白且必須小於四個全型字（8個字母)'});
+               
+
+                 $("#repostboard_tagbox-btn-addntag").click(function () {
+
+                  
+                  var input = $(".repostboard_tagbox-input").val();
+                
+
+                 //function newtag(){$(".postboard-tag").each(function(){
+                        
+                   //     if (!$this.is(':contains('+input+')'){return true;}
+
+                  if (input.length >8 || input=='' ){
+
+                    $("#repostboard_tagbox-btn-addntag").popover('show');
+
+                  }
+                  else if ($(".repostboard_tagbox-input").val()!='')
+                    {
+                       $("#repostboard-tagbox").append(' <a class="btn btn-primary disabled repostboard-tag"><i class="icon-remove icon-white tagremove"></i> '+input+'</a>');
+                    
+
+                    $(".repostboard_tagbox-input").val(''); //Reset input
+                    
+                    }
+                   
+                                 
+                  });
+                </script>
+
+                <a class="btn btn-warning">SubmitPost</a>
+              </div>
+              
+              <div class="dropdown vtagbox"> <!--vtag-->
+                <select class="btn btn-success vtag-select">
+                    <option>問掛</option>
+                </select>
+              </div> 
+
+            <!-- Auto read reposttag-func -->
+              <script type="text/javascript">
+              $(function(){
+                var postalltags=[];
+
+                $("#postidalltags").children(".tags").each(function(){
+                  postalltags.push($(this).text());
+                  return postalltags;}
+                  );
+
+                for(i=0; i< postalltags.length; i++){
+                  $("#repostboard-tagbox").append('<a class="btn btn-primary disabled repostboard-tag"><i class="icon-remove icon-white tagremove"></i>'+postalltags[i]+'</a>'); }
+              } );
+              </script>
+
+            
+             <script type="text/javascript">//tagremove-func
+           
+           $(".tagremove").live('click', function() {
+            $(this).parent().remove();
+             });
+           </script>
+             
+                   
+           </div>
+
+        </div><!--RePostBoard close-->
+          
+      </div><!--Post close-->
+    <div class="row-fluid pushBox">
+      <div class="row-fluid push">
+            <div class="span2 pushside">
+            <img src="./test.jpeg" class="img-rounded">
+            </div>
+            <div class ="span10 pushContent">
+              <strong>TestUser:</strong><br>具有設計偏執的雨柔，與想法總是在框框外的筱茜，腦袋裡總是充滿各式奇幻想像，每天都在探索更多新奇有趣的可能；每個產品細節都流露出她們對創意設計的著迷、瘋狂創新的想法，還有她們對人生的想法：「生活也可以不用那麼嚴肅，人是生來享樂的！」
+
+              <div class="row-fluid pushProp">
+                  Push at: 2012/10/28/12:12. <i class="icon-heart"></i> 10</a>
+                </div>
+
+             </div>
+      </div> <!--Push close-->
+      <div class="row-fluid  push">
+            <div class="span2 pushside">
+            <img src="./test.jpeg" class="img-rounded">
+            </div>
+            <div class ="span10 pushContent">
+              <strong>TestUser:</strong><br>大推！
+               
+                <div class="row-fluid pushProp">
+                  Push at: 2012/10/28/12:14 .
+            <i class="icon-heart"></i> 2
+                </div>
+           </div>
+
+      </div><!--Push close-->
+    </div> <!--PushtBox close-->
+
+    <div class="row-fluid pushboard">
+      <div class="span2 pushside">
+            <img src="./photo.jpeg" class="img-rounded">
+            </div>
+            <div class ="span10 pushContent">
+              <strong>Shiki Kao:</strong><br>
+              <textarea class="pushInput" type="text" placeholder="Here's my opions..." warp="soft"></textarea>
+            </div>
+        
+      </div>  <!--Pushboard close-->
+    </div> <!--PostBox close-->
+<hr>
+
+
+
+
+</div> <!--stream close-->
+
+
+
+
+     <div class="span4 kaleido">
+
+      <div class="row-fluid trends">
+      <h3>TopTags Weekly!</h3>
+        <div class="tTags"><h4>Tag1:8493</h4></div>
+        <div class="tTags"><h4>Tag2:7325</h4></div>
+        <div class="tTags"><h4>Tag3:6094</h4></div>
+        <div class="tTags"><h4>Tag4:5043</h4></div>
+        <div class="tTags"><h4>Tag5:4209</h4></div>
+        <div class="tTags"><h4>Tag6:3029</h4></div>
+        <div class="tTags"><h4>Tag7:2039</h4></div>
+        <div class="tTags"><h4>Tag8:1935</h4></div>
+        <div class="tTags"><h4>Tag9:1509</h4></div>
+        <div class="tTags"><h4>Tag10:1294</h4></div>
+      </div>
+      <hr>
+      <div class="row-fluid adBox">
+        <div class="row-fluid ad"> 
+        <h4>「LINE」のエンジニア、急募！<br>
+         shoukai.type.jp</h4>   
+          <div class="adPic"><img src="./end.png" class="img-polaroid"></div>
+          <div class="adContent">
+            NHN Japan が30代エンジニアを積極採用中！世界230カ国、6,000万人が利用する『LINE』！世界に人々に親しまれるサービスを共に創りませんか！【typeの人材紹介】
+          </div>
+        </div>
+        <hr>
+         <div class="row-fluid adBox">
+        <div class="row-fluid ad"> 
+        <h4>35歳、女性マーケティング部長。年収1600万<br>
+         concord-career.com</h4>   
+          <div class="adPic"><img src="./end-1.png" class="img-polaroid"></div>
+          <div class="adContent">
+            良い経験を持つ人には、良いポジションがある時代。キャリアは、会社まかせではなく、ステップアップできるように設計することが大切です。　ハイクラスのキャリア設計は【コンコード】
+          </div>
+        </div>
+      </div>
+   
+
+
+  </div>
+</div>
+</div>
+
+</body>
+</html>

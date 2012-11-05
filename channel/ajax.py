@@ -1,19 +1,11 @@
 import sys
 
-from django.core import serializers
-from django.shortcuts import render_to_response
-from django.template.loader import render_to_string
-from django.template import RequestContext
-from django.utils import simplejson
-from django.http import HttpResponse
-
-from account.decorators import login_required
-
 from channel.models import Channel
 from tagcanal.models import *
 from tagcanal.utils import *
-from stream.ajax import _response
+from stream.ajax import response, response_errors
 from stream.decorators import ajax_view
+
 
 def _get_channels(request):
     resp = {
@@ -23,7 +15,16 @@ def _get_channels(request):
     qs = Channel.objects.filter(user=request.user)
     for channel in qs:
         resp['channels'].append(channel.to_json())
-    return _response(resp)
+    return response(resp)
+
+def _resp_tags(request, channel_id):
+    resp = {
+        'alert': None,
+        'tags': [],
+        }
+    c = Channel.objects.get(id=channel_id)
+    resp['tags'] = c.get_all_tags()
+    return response(resp)
 
 @ajax_view
 def get_channels(request):
@@ -42,11 +43,18 @@ def remove_channel(request):
 @ajax_view(method='POST')
 def add_tag(request):
     "add a tag to a channel"
-    Channel.objects.get(id=request.POST['channel']).add_tag(request.POST['tag'])
-    return _get_channels(request)
+    try:
+        cid = request.POST['channel']
+        Channel.objects.get(id=cid).add_tag(request.POST['tag'])
+        return _resp_tags(request, cid)
+    except NounTag.DoesNotExist:
+        return response_errors("tag '%s' is not exist, cannot be added" % request.POST['tag'])
+    except Exception as e:
+        return response_errors(str(e))
 
 @ajax_view(method='POST')
 def remove_tag(request):
     "remove a tag to a channel"
+    cid = request.POST['channel']
     Channel.objects.get(id=request.POST['channel']).remove_tag(request.POST['tag'])
-    return _get_channels(request)
+    return _resp_tags(request, cid)

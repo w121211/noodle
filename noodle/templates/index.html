@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" ng-app="noodle">
+<head>
+  <meta charset="utf-8">
+  <title>Google Phone Gallery</title>
+  <link rel="stylesheet" href="site_media/static/app/css/app.css">
+  <link rel="stylesheet" href="site_media/static/app/css/bootstrap.css">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+  <script src="site_media/static/app/lib/angular/angular.js"></script>
+  <script src="site_media/static/app/js/app.js"></script>
+  <script src="site_media/static/app/js/controllers.js"></script>
+  <script src="site_media/static/app/js/filters.js"></script>
+  <script src="site_media/static/app/js/services.js"></script>
+    <script src="site_media/static/app/js/directives.js"></script>
+  <script src="site_media/static/app/lib/angular/angular-resource.js"></script>
+</head>
+<body>
+
+<div ng-view></div>
+<div ng-include src="'site_media/static/app/partials/alert.html'"></div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div ng-include src="'site_media/static/app/partials/channel.html'" class="span3"></div>
+        <div ng-include src="'site_media/static/app/partials/stream.html'" class="span4"></div>
+        <div class="span2"><h1>KaleidoPane</h1></div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -23,7 +23,7 @@ def index(request):
     {domain}/{forum_url}/
     """
     threads = Thread.objects.all()
-    return render_to_response('stream/index.html', {'threads': threads})
+    return render_to_response('stream/ng2-ng-index.html', {'threads': threads})
 
 @login_required
 def test(request):
