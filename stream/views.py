@@ -9,8 +9,8 @@ from django.http import HttpResponse
 
 from account.decorators import login_required
 
-from tagcanal.models import *
-from tagcanal.utils import *
+from tagbase.models import *
+from tagbase.utils import *
 from stream.models import *
 
 _tagger = GeneralTagger()
@@ -37,10 +37,10 @@ def test(request):
 @login_required()
 def stream(request):
     """
-    Show a stream page by a given tagcanal or tags. If no specifies, use the default tagcanal (mystream).
+    Show a stream page by a given tagbase or tags. If no specifies, use the default tagbase (mystream).
     GET:{
     't':'t1 t2 t3', # tags
-    'c':''       , # tagcanal id
+    'c':''       , # tagbase id
     }
 
     {domain}/{stream}/?t=
@@ -140,7 +140,7 @@ def _api_get_posts(request):
     if request.is_ajax() and request.method == 'GET':
         try:
             if 't' in request.GET:
-                # return tagcanal posts
+                # return tagbase posts
 #                tags = str(request.GET['t']).split('+')
                 t = request.GET
                 tag_names = str(t).split('+')

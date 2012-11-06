@@ -5,7 +5,7 @@
         <i ng-click="removeChannel(channel.id)" class="icon-trash"></i></h2></a>
 
         <div ng-controller="TagCtrl">
-            <p ng-repeat="tag in channel.tags">
+            <p ng-repeat="tag in tags">
                 {{ tag }}
                 <i ng-click="untagChannel(channel.id, tag)" class="icon-remove"></i>
             </p>

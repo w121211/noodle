@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from tagcanal.models import NounTag
+from tagbase.models import NounTag
 
 class Channel(models.Model):
     time = models.DateTimeField(auto_now_add=True)

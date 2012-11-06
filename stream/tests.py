@@ -7,7 +7,7 @@ Replace this with more appropriate tests for your application.
 
 from django.test import TestCase
 
-from tagcanal.models import *
+from tagbase.models import *
 from stream.models import *
 
 class ModelTest(object):
@@ -24,7 +24,7 @@ class ModelTest(object):
     >>> pu1 = Push.objects.create(user=u, body='bb', post=po1)
 
     # test tagging
-    >>> from tagcanal.utils import GeneralTagger
+    >>> from tagbase.utils import GeneralTagger
     >>> g = GeneralTagger()
     >>> l = g.like.tag(po1)
     >>> l = g.noun.tag(po1, 'test', u)

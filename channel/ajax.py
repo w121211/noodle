@@ -1,8 +1,8 @@
 import sys
 
 from channel.models import Channel
-from tagcanal.models import *
-from tagcanal.utils import *
+from tagbase.models import *
+from tagbase.utils import *
 from stream.ajax import response, response_errors
 from stream.decorators import ajax_view
 

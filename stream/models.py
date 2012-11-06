@@ -3,7 +3,7 @@ from django.contrib.contenttypes import generic
 from django.db import models
 from django.forms import ModelForm
 
-from tagcanal.models import TaggableItem
+from tagbase.models import TaggableItem
 
 
 class Thread(models.Model):

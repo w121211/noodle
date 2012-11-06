@@ -9,8 +9,8 @@ from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from django.utils.safestring import mark_safe
 
-from tagcanal.models import *
-from tagcanal.utils import *
+from tagbase.models import *
+from tagbase.utils import *
 from taggraph.utils import TagGraph
 from taggraph.utils import TextMiner
 from stream.models import *
@@ -55,6 +55,7 @@ def get_posts(request):
         if tags: # return posts by given tags
             tags = tags.split('+')
             qs = _tagger.search(qs, tags, request.user)
+            qs = _paginate(qs, POSTS_PER_PAGE, time)
         else: # return all posts
             qs = _paginate(qs, POSTS_PER_PAGE, time)
 
@@ -107,8 +108,7 @@ def create_post(request):
     # Validate post content
     f = PostForm(request.POST)
     if not f.is_valid():
-        resp['alert'] = "post title or body is not valid"
-        return response(resp)
+        return response_errors(f.errors.as_text())
     post = f.save(commit=False)
     post.user = request.user
     post.save()
@@ -152,8 +152,7 @@ def push_post(request):
         }
     f = PushForm(request.POST)
     if not f.is_valid():
-        resp['alert'] = f.errors.as_text()
-        return response(resp)
+        return response_errors(f.errors.as_text())
     push = f.save(commit=False)
     push.user = request.user
     push.save()
@@ -175,17 +174,17 @@ def tag_post(request):
     try:
         f = LivetagForm(request.POST)
         if not f.is_valid():
-            resp['alert'] = f.errors.as_text()
-            return response(resp)
+            return response_errors(f.errors.as_text())
 
         p = Post.objects.get(id=f.cleaned_data['item'])
         _tagger.noun.tag(p, f.cleaned_data['tag'], request.user)
         resp['tags'] = p.get_tags(request.user)
+        return response(resp)
     except ForbiddenTagError as e:
-        resp['alert'] = "%s cannot be used as the tag" % e.tag
+#        resp['alert'] = "%s cannot be used as the tag" % e.tag
+        response_errors("%s cannot be used as the tag" % e.tag)
     except Exception as e:
-        print e
-    return response(resp)
+        response_errors(str(e))
 
 @ajax_view
 def vote_livetag(request):

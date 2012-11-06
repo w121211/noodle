@@ -6,7 +6,7 @@ from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, validate_slug
 from django.utils.translation import ugettext_lazy as _
 
 unicode_slug_re = re.compile(r'^[\w]+$', re.UNICODE)
@@ -23,7 +23,7 @@ class Tag(models.Model):
         )
     time = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User)
-    name = models.CharField(max_length=50, unique=True, validators=[validate_unicode_slug])
+    name = models.CharField(max_length=20, unique=True, validators=[validate_unicode_slug,])
     type = models.CharField(max_length=2, choices=TYPES)
 
     def __unicode__(self):
@@ -67,12 +67,13 @@ class VerbTag(WordTag):
         super(VerbTag, self).__init__(*args, **kwargs)
         self.type = 'VB'
 
+
 ### Tagger ###
 
 class LiveTag(models.Model):
     tag = models.ForeignKey(Tag)
     user = models.ForeignKey(User, related_name='tagged_livetags')
-    voters = models.ManyToManyField(User, related_name='voted_livetags')
+    voters = models.ManyToManyField(User, related_name='voted_livetags', blank=True)
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
@@ -110,6 +111,7 @@ class LiveTag(models.Model):
         unique_together = ('content_type', 'object_id', 'tag')
 
 
+# Item model is used for test purpose
 class Item(models.Model):
     user = models.ForeignKey(User)
     tags = generic.GenericRelation(LiveTag, related_name="%(app_label)s_%(class)s_tags")
@@ -132,6 +134,32 @@ class TaggableItem(models.Model):
         ordering = ('-time',)
 
 
+### Model forms ###
+
+class ForbiddenTagForm(forms.ModelForm):
+    class Meta:
+        model = ForbiddenTag
+        exclude = ('type')
+
+
+class FunctionTagForm(forms.ModelForm):
+    class Meta:
+        model = FunctionTag
+        exclude = ('type')
+
+
+class NounTagForm(forms.ModelForm):
+    class Meta:
+        model = NounTag
+        exclude = ('type', 'sub_type')
+
+
+class LiveTagForm(forms.ModelForm):
+    class Meta:
+        model = LiveTag
+        fields= ('tag', 'user')
+
+
 class LivetagForm(forms.Form):
-    tag = forms.CharField(max_length=50, validators=[validate_unicode_slug])
+    tag = forms.CharField(max_length=10, validators=[validate_unicode_slug])
     item = forms.IntegerField(min_value=1)

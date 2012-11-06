@@ -1,5 +1,5 @@
-from tagcanal.models import *
-from tagcanal.utils import *
+from tagbase.models import *
+from tagbase.utils import *
 from taggraph.utils import *
 
 class TextMinerTest(object):
@@ -36,7 +36,7 @@ class BaseTagGraphTest(object):
 
 class TagGraphTest(object):
     """
->>> from tagcanal.models import *
+>>> from tagbase.models import *
 >>> init_data()
 >>> tags = NounTag.objects.all()
 >>> miner = TextMiner(tags)

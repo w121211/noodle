@@ -138,7 +138,7 @@ INSTALLED_APPS = [
     # project
     'channel',
     'stream',
-    'tagcanal',
+    'tagbase',
     'taggraph',
 ]
 

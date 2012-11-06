@@ -56,7 +56,7 @@ function ChannelCtrl($scope, $http, SharedService) {
 }
 
 
-function TagCtrl($scope, $http) {
+function TagCtrl($scope, $http, SharedService) {
     $scope.tag = "";
 
     $scope.addTag = function() {
@@ -71,11 +71,10 @@ function TagCtrl($scope, $http) {
     $scope.tagChannel = function() {
         $http({method: 'POST', url: 'api/channel/tag/add/', data:$.param({channel: $scope.id, tag: $scope.tag})}).
             success(function(data, status, headers, config) {
-//                $scope.setTags(data.tags);
-//                console.log($scope);
-                $scope.tags = data.tags;
-                console.log($scope);
+                $scope.tags.length = 0;
+                $scope.tags.push.apply($scope.tags, data.tags);
                 $scope.tag = "";
+                SharedService.setCurrentTags($scope.tags);
             }).error(function(data, status, headers, config) {
                 $scope.sendAlert(data);
             });
@@ -85,7 +84,9 @@ function TagCtrl($scope, $http) {
         console.log($scope.tag);
         $http({method: 'POST', url: 'api/channel/tag/remove/', data:$.param({channel: channelId, tag: tagName})}).
             success(function(data, status, headers, config) {
-                $scope.tags = data.tags;
+                $scope.tags.length = 0;
+                $scope.tags.push.apply($scope.tags, data.tags);
+                SharedService.setCurrentTags($scope.tags);
             }).error(function(data, status, headers, config) {
                 $scope.sendAlert(data);
             });
@@ -189,9 +190,10 @@ function PushCtrl($scope, $http) {
         console.log($scope.body);
         $http({method: 'POST', url: 'api/post/push/', data: $.param({post: $scope.post.id, body:$scope.body})}).
             success(function(data, status, headers, config) {
-                $scope.sendAlert(data.alert);
                 $scope.pushes = data.pushes;
                 $scope.body = "";
+            }).error(function(data, status, headers, config) {
+                $scope.sendAlert(data);
             });
     };
 }
@@ -221,8 +223,9 @@ function LivetagCtrl($scope, $http) {
     $scope.tag = function(itemID) {
         $http({method: 'POST', url: 'api/post/tag/', data: $.param({item: $scope.post.id, tag:$scope.name})}).
             success(function(data, status, headers, config) {
-                $scope.sendAlert(data.alert);
                 $scope.livetags = data.tags;
+            }).error(function(data, status, headers, config) {
+                $scope.sendAlert(data);
             });
     };
 }

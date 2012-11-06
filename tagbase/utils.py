@@ -1,4 +1,4 @@
-from tagcanal.models import *
+from tagbase.models import *
 from django.db import IntegrityError
 from django.db.models import Q
 
@@ -8,8 +8,12 @@ LIKE_TAG_NAME = 'like'
 
 class BaseTagger(object):
     def _tag(self, object, tag, user):
-        live_tag = LiveTag.objects.create(content_object=object, tag=tag, user=user)
-        return live_tag
+#        live_tag = LiveTag.objects.create(content_object=object, tag=tag, user=user)
+        f = LiveTagForm({'tag': tag.id, 'user': user.id})
+        t = f.save(commit=False)
+        t.content_object = object
+        t.save()
+        return t
 
     def get_tag(self, name):
         return Tag.objects.get(name=name)
@@ -18,7 +22,13 @@ class BaseTagger(object):
 class FunctionTagger(BaseTagger):
     def __init__(self, tag_name):
         self.autouser, created = User.objects.get_or_create(username=AUTO_USERNAME, password=AUTO_USERPWD)
-        self.tag_obj, created = FunctionTag.objects.get_or_create(user=self.autouser, name=tag_name)
+#        self.tag_obj, created = FunctionTag.objects.get_or_create(user=self.autouser, name=tag_name)
+        try:
+            self.tag_obj = FunctionTag.objects.get(name=tag_name)
+        except FunctionTag.DoesNotExist:
+            f = FunctionTagForm({'user': self.autouser.id, 'name': tag_name})
+#            print f.errors.as_text()
+            self.tag_obj = f.save()
 
     def tag(self, object):
         return self._tag(object, self.tag_obj, self.autouser)
@@ -56,8 +66,9 @@ class NounTagger(WordTagger):
     def _create_tag(self, tag_name, user):
         if tag_name in forbidden_tags:
             raise ForbiddenTagError(tag_name)
-        t = NounTag.objects.create(name=tag_name, user=user)
-        return t
+#        t = NounTag.objects.create(name=tag_name, user=user)
+        f = NounTagForm({'name': tag_name, 'user': user.id})
+        return f.save()
 
     def bulk_tag(self, object, tag_names, user):
         for t in tag_names:
@@ -69,7 +80,7 @@ class NounTagger(WordTagger):
         except NounTag.DoesNotExist:
             t = self._create_tag(tag_name, user)
         live_tag = self._tag(object, t, user)
-        live_tag.voters.add(user)
+#        live_tag.voters.add(user)
         return live_tag
 
     def search(self, queryset, tag_names):
