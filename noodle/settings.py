@@ -17,7 +17,15 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": "dev.db",
-    }
+    },
+#    "default": {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'noodledb',
+#        'USER': 'noodle',
+#        'PASSWORD':'eldoon',
+#        'HOST' : 'localhost',
+#        'PORT' : '5432',
+#    }
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -134,6 +142,7 @@ INSTALLED_APPS = [
     # external
     "account",
     "metron",
+    'tastypie',
     
     # project
     'channel',

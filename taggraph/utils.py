@@ -13,7 +13,7 @@ def get_all_tags_graph():
         d = simplejson.loads(j)
         g = json_graph.node_link_graph(d, directed=True)
     except IndexError:
-        g = networkx.read_edgelist('/Users/chi/git/textmining/export/wired_text_hubpagerank.edgelist',
+        g = networkx.read_edgelist('taggraph/fixtures/wired_text_hubpagerank.edgelist',
             create_using=networkx.DiGraph())
         tg = BaseTagGraph()
         tg.graph = g
@@ -24,7 +24,6 @@ def get_all_tags_graph():
         d = simplejson.loads(j)
         g = json_graph.node_link_graph(d, directed=True)
     return g
-
 
 class BaseTagGraph(object):
     def __init__(self):
@@ -106,7 +105,7 @@ class TagGraph(BaseTagGraph):
     def _update_related_tags(self):
         self._pagerank()
         for n, d in self.graph.nodes_iter(data=True):
-            print "%s: %f" % (n, d['pr'])
+            # print "%s: %f" % (n, d['pr'])
             if d['pr'] > (1.0 / self.graph.number_of_nodes()):
                 self.related_tags.add(n)
 

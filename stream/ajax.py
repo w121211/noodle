@@ -1,4 +1,5 @@
 import sys
+import traceback
 
 from django.core import serializers
 from django.shortcuts import render_to_response
@@ -74,25 +75,30 @@ def autotag_post(request):
     Take a post content as input, find matching tags and return.
     {domain}/api/post/autotag/
     """
-    resp = {
-        'alert': None,
-        'tags': [],
-        }
+    try:
+        resp = {
+            'alert': None,
+            'tags': [],
+            }
 
-    # Validate post content
-    f = PostForm(request.POST)
-    if not f.is_valid():
-        return response_errors(f.errors.as_text())
-    post = f.save(commit=False)
+        # Validate post content
+        f = PostForm(request.POST)
+        if not f.is_valid():
+            return response_errors(f.errors.as_text())
+        post = f.save(commit=False)
 
-    # get matching tags
-    g = TagGraph(_miner)
-    g.add_text(post.title)
-    g.add_text(post.body)
-    #    resp['tags'] = list(g.direct_tags)
-    resp['tags'] = g.get_recommend_tags()
-
-    return response(resp)
+        # get matching tags
+        g = TagGraph(_miner)
+        g.add_text(post.title)
+        g.add_text(post.body)
+        #    resp['tags'] = list(g.direct_tags)
+        resp['tags'] = g.get_recommend_tags()
+        return response(resp)
+    except Exception as e:
+        print e
+        traceback.print_exc()
+        return response_errors(str(e))
+#    return response(resp)
 
 # TODO fix ajax redirect (302) error. (1) add ajaxRedirectResponse (2) using view div to display html
 @ajax_view(method='POST')

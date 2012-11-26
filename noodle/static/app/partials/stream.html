@@ -1,82 +1,119 @@
 <div ng-controller="PostCtrl" ng-init="loadPosts()">
 
-
     <div class="post-form">
-        title: <input type="text" ng-model="title">
-        body: <textarea ng-model="body"></textarea>
-        <button ng-click="autotag(this)">autotag</button>
-        <button ng-click="createPost(this)">post</button>
+        <textarea ng-model="title" class="postBoardTitle" type="text" placeholder="Title here..."warp="soft"></textarea><br>
+        <textarea ng-model="body" class="postBoardInput" type="text" placeholder="Here's my opions..." warp="soft"></textarea>
 
-        <div ng-controller="TagCtrl">
-            <p ng-repeat="(key, val) in tagSet">
-                {{ key }}
-                <i ng-click="removeTag(key)" class="icon-remove"></i>
-            </p>
-            <div class="tag_form">
-                add a tag: <input type="text" ng-model="tag" on-keyup="addTag()" keys="[27,13]">
+        <button ng-click="autotag(this)" class="btn btn-danger PostItNow" data-toggle="collapse" data-target="#postboard-tagbox"><h1>TagYourPostNow!<br></h1></button>
+
+        <div id="postboard-tagbox" class="collapse">
+            <div ng-controller="TagCtrl">
+                <b>Title: {{ title }}</b><br>
+                <a ng-repeat="(key, val) in tagSet" class="btn btn-primary disabled postboard-tag"><i ng-click="removeTag(key)" class="icon-remove icon-white tagremove"></i> {{ key }} </a>
+                <br>
+                <input class="postboard_tagbox-input" placeholder="Add More Tag..." size="16" type="text" ng-model="tag" on-keyup="addTag()" keys="[27,13]">
+                <a ng-click="createPost(this)" class="btn btn-danger postboard-tag">SubmitPost</a>
             </div>
         </div>
     </div>
 
+    <div class="post" ng-repeat="post in posts">
+        <div class="row-fluid titleBox">
+            <div class="span2 ifrePost">
+                <font color="white">
+                    <p>
+                    <h4 ng-show="post.reid">RE:</h4>
+                    <h4 ng-show="!post.reid">NEW:</h4>
+                    </p>
+                </font>
+            </div>
+            <div class="span10 title"><font color="white"><h4>{{ post.title }}</h4></font></div>
+        </div>
 
-    <div ng-repeat="post in posts">
+        <div class="row-fluid postContentBox">
+            <div class="span2 postSide">
+                <img src="./photo.jpeg" class="img-rounded">
+                <hr>
+                <strong>Top5 Tags</strong>
+                <div class="tagbox">
+                    <div class="tags-side">Tag1</div>
+                </div>
+            </div>
 
-        <h4 ng-show="post.reid">RE:</h4>
-        <h4 ng-show="!post.reid">NEW:</h4>
-        <p>{{ post.id }} | {{ post.title }} @ {{ post.user }}</p><p>{{ post.body }}</p>
+            <div class="span10 postContent">
+                <p><h4>{{ post.user }}</h4>@<i>{{ post.time }}</i><br>{{ post.body }}</p>
+                <div class="postproperties">
+                    <div class="span2 prop"><a class="btn btn-primary"><i class="icon-heart icon-white"></i></a><br><strong>20</strong></p></div>
+                    <div class="span2 prop alltags-btn-switch"><a class="btn btn-primary" data-toggle="collapse" data-target="#{{ post.id }}_alltags"><i class="icon-tags icon-white"></i></a><br><strong>20</strong></p></div>
+                    <div class="span2 prop"><a class="btn btn-primary"><i class="icon-bookmark icon-white"></i></a><br><strong>20</strong></p></div>
+                    <div class="span2 prop"><a class="btn btn-primary"><i class="icon-comment icon-white"></i></a><br><strong>20</strong></p></div>
+                    <div class="span2 prop"><a class="btn btn-primary" data-toggle="collapse" data-target="#{{ post.id }}-RepostBoard"><i class="icon-repeat icon-white"></i></a><br><strong>20</strong></p></div>
+                    <div class="span2 prop"><a class="btn btn-primary"><i class="icon-share icon-white"></i></a><br><strong>20</strong></p></div>
+                </div>
+            </div>
+
+            <div class="collapse alltagsBox" id="{{ post.id }}_alltags" >
+                <div ng-controller="LivetagCtrl" ng-init="livetags=post.tags">
+                    <div ng-repeat="livetag in livetags">
+                        <div class="tags btn btn-inverse" ng-click="unvote(livetag.id)" ng-show="livetag.myvote">{{ livetag.name }}<i>x {{ livetag.votes }}</i></div>
+                        <div class="tags btn btn-inverse" ng-click="vote(livetag.id)" ng-hide="livetag.myvote">{{ livetag.name }}<i>x {{ livetag.votes }}</i></div>
+                    </div>
+                    <div class="livetag_form">
+                        <input class="addlivetag" type="text" ng-model="name" on-keyup="tag()" keys="[27,13]" placeholder="add...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapse RepostBoard" id="{{post.id}}-RepostBoard">
+
+                <div ng-controller="PostReplyCtrl" ng-init="title=post.title; repost=post.id; livetags=post.tags" class="repost_form">
+                    <p><font color="#FF0066"><h4>Re: {{ title }}</h4></font></p> </br>
+                    <textarea ng-model="body" class="RepostBoardInput" type="text" placeholder="Here's my opions..." warp="soft"></textarea>
+                    <button ng-click="autotag(this)" class="btn btn-warning PostItNow" data-toggle="collapse" data-target="#{{post.id}}-retagbox"><h1>TagRePostNow!<br></h1></button>
+                    <div id="{{post.id}}-retagbox" class="collapse repostboard-tagbox">
+                        <div ng-controller="TagCtrl">
+                            <b>Title: {{ title }}</b><br>
+                            <a ng-repeat="livetag in livetags" class="btn btn-inverse disabled postboard-tag"><i ng-click="removeTag(key)" class="icon-remove icon-white tagremove"></i> {{ livetag.name }}</a> <br>
+                            <a ng-repeat="(key, val) in tagSet" class="btn btn-primary disabled postboard-tag"><i ng-click="removeTag(key)" class="icon-remove icon-white tagremove"></i> {{ key }} </a>
+                            <br>
+                            <input class="repostboard_tagbox-input" placeholder="Add More Tag..." size="16" type="text" ng-model="tag" on-keyup="addTag()" keys="[27,13]">
+                            <a ng-click="createPost(this)" class="btn btn-warning repostboard-tag">SubmitPost</a>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            </div>
 
 
-        <hr>
-        <div ng-controller="PostReplyCtrl" ng-init="title=post.title; repost=post.id" class="repost_form">
-            <p>{{ title }}</p>
-            body: <textarea ng-model="body"></textarea>
-            <button ng-click="autotag(this)">autotag</button>
-            <button ng-click="createPost(this)">post</button>
-            <div ng-controller="TagCtrl">
-                <p ng-repeat="(key, val) in tagSet">
-                    {{ key }}
-                    <i ng-click="removeTag(key)" class="icon-remove"></i>
-                </p>
-                <div class="tag_form">
-                    add a tag: <input type="text" ng-model="tag" on-keyup="addTag()" keys="[27,13]">
+
+            <div class="row-fluid pushBox" ng-controller="PushCtrl" ng-init="pushes=post.pushes">
+                <div class="row-fluid push" ng-repeat="push in pushes">
+                    <div class="span2 pushside">
+                        <img src="./test.jpeg" class="img-rounded">
+                    </div>
+
+                    <div class ="span10 pushContent" >
+                        <strong><i>{{ push.user }}</i></strong><br>{{ push.body }}
+                        <div class="row-fluid pushProp">
+                            Push at: {{ push.time }} <a><i class="icon-heart"></i> 10</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid push_form">
+                    <div class="span2 pushside">
+                        <img src="./test.jpeg" class="img-rounded">
+                    </div>
+                    <div class ="span10 pushContent">
+                        <strong>UserName</strong><br>
+                        <input class="pushinput" type="text" ng-model="body" on-keyup="push()" keys="[27,13]">
+                    </div>
                 </div>
             </div>
         </div>
-
-
-        <hr>
-        <div ng-controller="LivetagCtrl" ng-init="livetags=post.tags">
-            <ul ng-repeat="livetag in livetags">
-                <a ng-click="unvote(livetag.id)" ng-show="livetag.myvote">{{ livetag.name }}</a>
-                <a ng-click="vote(livetag.id)" ng-hide="livetag.myvote">{{ livetag.name }}</a>
-                <i>x {{ livetag.votes }}</i>
-            </ul>
-            <div class="livetag_form">
-                livetag: <input type="text" ng-model="name" on-keyup="tag()" keys="[27,13]">
-            </div>
-        </div>
-
-
-        <div ng-controller="PushCtrl" ng-init="pushes=post.pushes">
-            <div ng-repeat="push in pushes">
-                # {{ push.body }}
-                <i ng-controller="LivetagCtrl" ng-init="livetags=push.tags">
-                    <i ng-repeat="livetag in livetags">
-                        <a ng-click="unvote(livetag.id)" ng-show="livetag.myvote">{{ livetag.name }}</a>
-                        <a ng-click="vote(livetag.id)" ng-hide="livetag.myvote">{{ livetag.name }}</a>
-                        x{{ livetag.votes }}
-                    </i>
-                </i>
-
-            </div>
-            <div class="push_form">
-                push: <input type="text" ng-model="body" on-keyup="push()" keys="[27,13]">
-            </div>
-        </div>
     </div>
+
 
     <div>
-        <h1><a ng-click="loadPosts()">dig deeper</a></h1>
+        <a class="btn btn-success digdeeper" ng-click="loadPosts()"><h3>Dig Deeper</h3></a>
     </div>
 </div>
-

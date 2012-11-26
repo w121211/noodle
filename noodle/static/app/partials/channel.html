@@ -1,21 +1,30 @@
 <div ng-controller="ChannelListCtrl" ng-init="loadChannels()">
-
     <div ng-repeat="channel in channels" ng-controller="ChannelCtrl" ng-init="tags=channel.tags;id=channel.id">
-        <a ng-click="selectChannel(this)"><h2>{{ channel.name }} {{ channel.id }}
-        <i ng-click="removeChannel(channel.id)" class="icon-trash"></i></h2></a>
 
-        <div ng-controller="TagCtrl">
-            <p ng-repeat="tag in tags">
-                {{ tag }}
-                <i ng-click="untagChannel(channel.id, tag)" class="icon-remove"></i>
-            </p>
-            <div class="tag_form">
-                add tag: <input type="text" ng-model="tag" on-keyup="tagChannel()" keys="[27,13]">
+        <a class="btn btn-success channel" data-toggle="collapse" data-target="#{{ channel.id }}" ng-click="selectChannel(this)">
+            <h4>{{ channel.name }} {{ channel.id }}</h4>
+        </a>
+        <div class="collapse channelExtBox" id="{{ channel.id }}">
+
+
+
+            <div ng-controller="TagCtrl">
+                <input class="channel-addtag" type="text" ng-model="tag" on-keyup="tagChannel()" keys="[27,13]" placeholder="Add more Tag...">
+
+                <hr>
+
+
+                <a class="btn btn-primary ctags" ng-repeat="tag in tags">{{ tag }}
+                    <i ng-click="untagChannel(channel.id, tag)" class="icon-remove icon-white tagremove"></i></a>
+
             </div>
-        </div>
-    </div>
+            <hr>
+            <a class="btn btn-danger channelremove" ng-click="removeChannel(channel.id)"><i class=" icon-trash icon-white"></i></a>
 
+        </div>
+
+    </div>
     <div class="channel_form">
-        <button ng-click="addChannel()">new channel</button>
+        <a class="btn channel-btn-creat" ng-click="addChannel()"><h4>CreatNew!</h4></a>
     </div>
 </div>
